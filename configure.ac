@@ -22,15 +22,18 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [cos])
 
 # Checks for header files.
 AC_FUNC_ALLOCA
-AC_CHECK_HEADERS([fcntl.h limits.h locale.h malloc.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h sys/param.h sys/socket.h sys/time.h sys/timeb.h unistd.h wchar.h wctype.h])
+AC_CHECK_HEADERS([fcntl.h limits.h locale.h malloc.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h sys/param.h sys/socket.h sys/time.h sys/timeb.h unistd.h wchar.h wctype.h setjmp.h],[],[AC_MSG_ERROR([missing headers])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_INLINE
+
+AC_C_BIGENDIAN([AC_DEFINE([BIG_ENDIAN],[1],[define to 1 if big endian])],
+               [AC_DEFINE([LITTLE_ENDIAN],[1],[define to 1 if little endian])])
+
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T
@@ -39,6 +42,7 @@ AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
+AC_CHECK_SIZEOF([void *])
 
 # this is autoconf v2.69
 dnl AC_CHECK_HEADER_STDBOOL 
@@ -59,9 +63,6 @@ AC_FUNC_STRTOD
 
 AC_CHECK_FUNCS([bzero floor ftime getcwd gethostbyname gettimeofday iswprint localtime_r memchr memmove memset pow select setenv setlocale socket sqrt strcasecmp strchr strdup strpbrk strrchr strtol strtoull wcwidth])
 
-dnl AC_CONFIG_FILES([Makefile
-dnl                  llt/Makefile
-dnl                  tiny/Makefile])
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
