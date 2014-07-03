@@ -60,7 +60,7 @@ void path_to_dirname(char *path)
     }
 }
 
-#ifdef LINUX
+#if defined( LINUX ) || defined( CYGWIN )
 char *get_exename(char *buf, size_t size)
 {
     char linkname[64]; /* /proc/<pid>/exe */

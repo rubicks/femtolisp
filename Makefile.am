@@ -2,8 +2,10 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
+AM_CPPFLAGS = -DUSE_COMPUTED_GOTO -DDATADIR=\"$(pkgdatadir)\"
+
 AM_CFLAGS = -falign-functions -Wall -Wno-strict-aliasing -I$(top_srcdir) \
--I$(top_srcdir)/llt -DUSE_COMPUTED_GOTO
+-I$(top_srcdir)/llt
 
 
 
@@ -21,7 +23,7 @@ libllt_la_SOURCES = llt/bitvector.h llt/htable.h llt/ptrhash.h llt/utf8.h	\
 bin_PROGRAMS = flisp
 
 flisp_SOURCES = flmain.c flisp.h opcodes.h flisp.c builtins.c string.c	\
-	equalhash.c table.c iostream.c
+	equalhash.c table.c iostream.c autodefs.h
 
 flisp_LDADD = libllt.la
 
@@ -33,12 +35,13 @@ EXTRA_DIST = equal.c read.c print.c equalhash.c equalhash.h types.c operators.c	
 
 
 
-flispbootdir = $(bindir)
+# flispbootdir = $(datadir)
 
-flispboot_DATA = flisp.boot
+pkgdata_DATA = flisp.boot
 
 flisp.boot: flisp
-	cp -vft . $(top_srcdir)/*.lsp $(top_srcdir)/flisp.boot
+	cd $(builddir)
+	cp -vft . $(srcdir)/*.lsp $(srcdir)/flisp.boot
 	./$< mkboot0.lsp system.lsp compiler.lsp > flisp.boot.new
 	mv -vf flisp.boot.new flisp.boot
 	./$< mkboot1.lsp
@@ -58,6 +61,42 @@ unittest.sh: flisp flisp.boot
 	chmod +x $@
 
 
+
+BUILT_SOURCES = autodefs.h
+
+autodefs.h: Makefile
+	echo > $@
+	echo "#ifndef __AUTODEFS_H__" >> $@
+	echo "#define __AUTODEFS_H__" >> $@
+	echo >> $@
+	echo "#define ABS_BUILDDIR     \"$(abs_builddir)\"" >> $@
+	echo "#define ABS_SRCDIR       \"$(abs_srcdir)\"" >> $@
+	echo "#define ABS_TOP_BUILDDIR \"$(abs_top_builddir)\"" >> $@
+	echo "#define ABS_TOP_SRCDIR   \"$(abs_top_srcdir)\"" >> $@
+	echo >> $@
+	echo "#define PREFIX         \"$(prefix)\"" >> $@
+	echo "#define EXEC_PREFIX    \"$(exec_prefix)\"" >> $@
+	echo "#define BINDIR         \"$(bindir)\"" >> $@
+	echo "#define SBINDIR        \"$(sbindir)\"" >> $@
+	echo "#define LIBEXECDIR     \"$(libexecdir)\"" >> $@
+	echo "#define DATAROOTDIR    \"$(datarootdir)\"" >> $@
+	echo "#define DATADIR        \"$(datadir)\"" >> $@
+	echo "#define SYSCONFDIR     \"$(sysconfdir)\"" >> $@
+	echo "#define SHAREDSTATEDIR \"$(sharedstatedir)\"" >> $@
+	echo "#define LOCALSTATEDIR  \"$(localstatedir)\"" >> $@
+	echo "#define INCLUDEDIR     \"$(includedir)\"" >> $@
+	echo "#define LIBDIR         \"$(libdir)\"" >> $@
+	echo >> $@
+	echo "/* automake pkg- vars */" >> $@
+	echo "#define PKGLIBEXECDIR \"$(pkglibexecdir)\"" >> $@
+	echo "#define PKGDATADIR    \"$(pkgdatadir)\"" >> $@
+	echo "#define PKGINCLUDEDIR \"$(pkgincludedir)\"" >> $@
+	echo "#define PKGLIBDIR     \"$(pkglibdir)\"" >> $@
+	echo >> $@
+	echo "#endif" >> $@
+
+
+
 CLEANFILES = mkboot1.lsp mkboot0.lsp system.lsp compiler.lsp flisp.boot	\
-	unittest.sh
+	unittest.sh $(BUILT_SOURCES)
 

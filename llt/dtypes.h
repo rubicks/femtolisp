@@ -25,6 +25,8 @@
 #  define OPENBSD
 #elif defined(_WIN32)
 #  define WIN32
+#elif defined( __CYGWIN__ )
+#  define CYGWIN
 #else
 #  error "unknown platform"
 #endif
@@ -82,6 +84,11 @@
 #  define __PDP_ENDIAN	3412
 #  define __BYTE_ORDER       __LITTLE_ENDIAN
 #  define __FLOAT_WORD_ORDER __LITTLE_ENDIAN
+#  define LITTLE_ENDIAN  __LITTLE_ENDIAN
+#  define BIG_ENDIAN     __BIG_ENDIAN
+#  define PDP_ENDIAN     __PDP_ENDIAN
+#  define BYTE_ORDER     __BYTE_ORDER
+#elif defined( CYGWIN )
 #  define LITTLE_ENDIAN  __LITTLE_ENDIAN
 #  define BIG_ENDIAN     __BIG_ENDIAN
 #  define PDP_ENDIAN     __PDP_ENDIAN
